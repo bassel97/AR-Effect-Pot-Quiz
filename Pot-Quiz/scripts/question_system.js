@@ -107,10 +107,12 @@ function AnsweredFunction(number) {
         //Diagnostics.log("Correct Answer");
         correctAnswersNumber += 1;
 
-        SetScale(flowerStem, 50 + correctAnswersNumber * 10);
-        SetScale(flowerHead, 50 + correctAnswersNumber * 10);
-
         if (correctAnswersNumber >= 5) {
+            SetScale(flowerStem, 50 + correctAnswersNumber * 10);
+            SetScale(flowerHead, 50 + correctAnswersNumber * 10);
+
+            gameStaredBoolean = false;
+            scoreText.text = correctAnswersNumber.toString() + "/" + totalQuestionsNumber.toString();
             EndGame();
             return;
         }
@@ -118,6 +120,9 @@ function AnsweredFunction(number) {
     else {
         //Diagnostics.log("False Answer");
     }
+
+    SetScale(flowerStem, 50 + correctAnswersNumber * 10);
+    SetScale(flowerHead, 50 + correctAnswersNumber * 10);
 
     SetQuestionsAndAnswers(3);
     totalQuestionsNumber += 1;
@@ -153,15 +158,17 @@ PatchesModule.outputs.getPulse("GameStarted").then(event => {
         scoreText.text = "Score";
 
         SetScale(flowerStem, 50);
-        SetScale(flowerStem, 50);
-
-
-        //Diagnostics.log("GameStarted");
+        SetScale(flowerHead, 50);
     });
 });
 
 PatchesModule.outputs.getPulse("GameTimerEnded").then(event => {
     gameTimerEndedPulsed = event.subscribe(function () {
+
+        if (!gameStaredBoolean) {
+            return;
+        }
+
         gameStaredBoolean = false;
 
         EndGame();
@@ -171,7 +178,7 @@ PatchesModule.outputs.getPulse("GameTimerEnded").then(event => {
 });
 
 PatchesModule.outputs.getScalar("GameTimer").then(event => {
-    PatchesModule.inputs.setString("Timer", event.add(-10).abs().toString().concat("s"));
+    PatchesModule.inputs.setString("Timer", event.add(-20).abs().toString().concat("s"));
 });
 
 StartState();
